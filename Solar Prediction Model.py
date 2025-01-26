@@ -1,23 +1,30 @@
-# IMPORTED LIBRARIES
 import pandas as pd
-
-
-
-# Loading Data
-data = pd.read_excel(r'D:\02 ARTIFICIAL INTELLIGENCE\artificial-intelligence\Abu Dhabi Weather 2024.xlsx')
-# pd.set_option('display.max_rows', None)  # Remove comment to show all rows
-
-# Calculating Sunshine Hours
-data['SUNSHINE HOURS'] = (pd.to_datetime(data['SUNSET']) - pd.to_datetime(data['SUNRISE'])).dt.total_seconds() / 3600
-
-
-# Linear Regression
-
-import numpy as np
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-X = np.array([[1,1], [1,2], [2, 2], [2,3]])
-y = np.dot(X, np.array([1, 2]) + 3)
-reg = LinearRegression().fitx(X, y)
-reg.score(X, y)
+# Load the dataset
+data = pd.read_excel(r'01 - DATASET\01- AUH Weather 2024 [CLEANED].xlsx')
 
+# Select features and target
+X = data[['TEMPERATURE', 'HUMIDITY', 'WIND SPEED', 'SOLAR RADIATION']]
+y = data['SOLAR ENERGY']
+
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train the model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predictions
+y_pred = model.predict(X_test)
+
+# Evaluation
+mae = mean_absolute_error(y_test, y_pred)
+rmse = mean_squared_error(y_test, y_pred, squared=False)
+r2 = r2_score(y_test, y_pred)
+
+print(f"MAE: {mae}")
+print(f"RMSE: {rmse}")
+print(f"R²: {r2}")
